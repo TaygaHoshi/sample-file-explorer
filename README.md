@@ -3,7 +3,7 @@ This is a sample file explorer combined with a simple system monitor, written in
 
 ## Installation
 These steps below should be self-explanatory. I advise you to check the .sh files and the makefile first, before running these commands.
-```
+```bash
 git clone https://github.com/TaygaHoshi/sample-file-explorer.git
 virtualenv sample-file-explorer
 cd sample-file-explorer
@@ -13,10 +13,8 @@ make install
 ```
 
 ## Running
+After installing, you can use either of these commands below:
 ```
 make
-```
-or
-```
 make run
 ```
