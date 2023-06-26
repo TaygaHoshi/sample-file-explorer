@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QLabel, QListWidget, QMainWindow, QGridLayout, QWidget, QPushButton, QLineEdit
+from PyQt6.QtWidgets import QApplication, QLabel, QListWidget, QMainWindow, QGridLayout, QWidget, QPushButton, QLineEdit, QCheckBox
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 from explorer import *
@@ -22,6 +22,7 @@ class GUI:
     copy_path_button = QPushButton(text="Copy")
     search_button = QPushButton(text="Search")
     search_textbox = QLineEdit(placeholderText="Search within current directory.")
+    hidden_files_checkbox = QCheckBox(text="Show hidden files")
 
     # fonts
     default_font = QFont("Noto Sans", 16)
@@ -32,15 +33,22 @@ class GUI:
 
     def get_list(self):
         all_list = get_all()
+
+        if not self.hidden_files_checkbox.isChecked():
+            all_list = [x for x in all_list if not x.startswith(".")]
+
         all_list.sort(key=lambda v: v.upper())
         return [".."] + all_list
+
+    def update_path_list(self):
+        self.path_list.clear()
+        self.path_list.addItems(self.get_list())
 
     def list_doubleclick(self, item):
         open_path(get_current_dir() + "/" + item.text())
         self.update_cwd_label()
         
-        self.path_list.clear()
-        self.path_list.addItems(self.get_list())
+        self.update_path_list()
 
     def copy_current_path(self):
         try:
@@ -54,10 +62,13 @@ class GUI:
         self.searchwin = SearchWindow()
         self.searchwin.generate_results(self.search_textbox.text())
         self.search_textbox.setText("")
-        
+
     def init_list(self):
         try:
             log("Creating the path list view.", "i")
+            self.hidden_files_checkbox.setChecked(True)
+            self.hidden_files_checkbox.clicked.connect(self.update_path_list)
+
             self.path_list.setStyleSheet(list_css)
             self.path_list.verticalScrollBar().setStyleSheet(scroll_css)
             self.path_list.horizontalScrollBar().setStyleSheet(scroll_css)
@@ -119,11 +130,12 @@ class GUI:
         log("Applying the layout.", "i")
         self.main_layout.addWidget(self.current_dir_label, 0, 0)
         self.main_layout.addWidget(self.copy_path_button, 0, 1)
-        self.main_layout.addWidget(self.path_list, 1, 0, 2, 1)
-        self.main_layout.addWidget(self.static_info_label, 1, 1)
-        self.main_layout.addWidget(self.dynamic_info_label, 2, 1)
-        self.main_layout.addWidget(self.search_textbox, 3, 0)
-        self.main_layout.addWidget(self.search_button, 3, 1)
+        self.main_layout.addWidget(self.hidden_files_checkbox, 1, 0)
+        self.main_layout.addWidget(self.path_list, 2, 0, 2, 2)
+        self.main_layout.addWidget(self.static_info_label, 2, 2)
+        self.main_layout.addWidget(self.dynamic_info_label, 3, 2)
+        self.main_layout.addWidget(self.search_textbox, 4, 0)
+        self.main_layout.addWidget(self.search_button, 4, 1)
         self.main_widget.setLayout(self.main_layout)
 
         log("Starting.", "i")
