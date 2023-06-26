@@ -1,0 +1,6 @@
+list_css = "border:2px solid palette(highlight); margin:10px;"
+info_css = "border:2px solid palette(highlight); margin:10px; margin-left: 0px; padding: 10px;"
+header_css = "border:2px solid palette(highlight); margin:10px; margin-bottom:0px;  padding: 10px;"
+scroll_css = "border:0px solid palette(highlight); margin:0px;"
+copy_button_css = "background-color: palette(highlight); border: 1px solid palette(highlight); margin:10px; margin-left:0px; margin-bottom: 0px"
+search_button_css = "background-color: palette(highlight); border: 1px solid palette(highlight); margin:10px; margin-left:0px;"
