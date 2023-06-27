@@ -35,6 +35,10 @@ class GUI:
 
     def init_settings(self):
         # Loads settings from the setting file and apply to widgets as necessary
+        # Also initializes widgets for filters and settings
+        self.hidden_files_checkbox.setStyleSheet(checkbox_css)
+        self.hidden_files_checkbox.clicked.connect(self.handle_hidden_files)
+
         self.setting_handler.load_settings()
         log(self.setting_handler.settings["show_hidden_files"], "i")
 
@@ -93,8 +97,6 @@ class GUI:
         # Initializes path_list
         try:
             log("Creating the path list view.", "i")
-            self.hidden_files_checkbox.clicked.connect(self.handle_hidden_files)
-
             self.path_list.setStyleSheet(list_css)
             self.path_list.verticalScrollBar().setStyleSheet(scroll_css)
             self.path_list.horizontalScrollBar().setStyleSheet(scroll_css)

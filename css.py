@@ -4,3 +4,4 @@ header_css = "border:2px solid palette(highlight); margin:10px; margin-bottom:0p
 scroll_css = "border:0px solid palette(highlight); margin:0px;"
 copy_button_css = "background-color: palette(highlight); border: 1px solid palette(highlight); margin:10px; margin-left:0px; margin-bottom: 0px"
 search_button_css = "background-color: palette(highlight); border: 1px solid palette(highlight); margin:10px; margin-left:0px;"
+checkbox_css = "margin-left: 20px; margin-top: 10px"
