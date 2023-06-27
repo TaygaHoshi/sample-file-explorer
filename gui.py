@@ -1,3 +1,5 @@
+#!./bin/python3
+
 from PyQt6.QtWidgets import QApplication, QLabel, QListWidget, QMainWindow, QGridLayout, QWidget, QPushButton, QLineEdit, QCheckBox
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
