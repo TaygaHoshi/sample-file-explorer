@@ -13,7 +13,7 @@ make install
 ```
 
 ## Running
-After installing, you can use either of these commands below:
+After installing, you can either "chmod u+x gui.py" and double click gui.py or use one of these commands below:
 ```
 make
 make run
