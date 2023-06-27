@@ -32,15 +32,22 @@ class GUI:
     setting_handler = SettingHandler(get_current_dir())
 
     def init_settings(self):
+        # Loads settings from the setting file and apply to widgets as necessary
         self.setting_handler.load_settings()
         log(self.setting_handler.settings["show_hidden_files"], "i")
+
+        # Apply to widgets
         self.hidden_files_checkbox.setChecked("True" == self.setting_handler.settings["show_hidden_files"])
 
     def update_cwd_label(self):
+        # Updates the header
         self.current_dir_label.setText(f"{get_current_dir()}")
         self.current_dir_label.update()
 
     def get_list(self):
+        # Works similarly to basic functionalities of "ls" and "ls -a"
+        # Basically, returns the content of current directory
+        # ".." is used as a "go up one level" button.
         all_list = get_all()
 
         if not self.hidden_files_checkbox.isChecked():
@@ -50,20 +57,23 @@ class GUI:
         return [".."] + all_list
 
     def update_path_list(self):
+        # Updates path list with the contents of current directory
         self.path_list.clear()
         self.path_list.addItems(self.get_list())
 
     def handle_hidden_files(self):
+        # Handles toggling hidden_files_checkbox
         self.update_path_list()
         self.setting_handler.change_setting("show_hidden_files", str(self.hidden_files_checkbox.isChecked()))
 
     def list_doubleclick(self, item):
+        # Handles double clicking path_list
         open_path(get_current_dir() + "/" + item.text())
         self.update_cwd_label()
-        
         self.update_path_list()
 
     def copy_current_path(self):
+        # Handles clicking copy_path_button
         try:
             self.clipboard.clear()
             self.clipboard.setText(self.current_dir_label.text())
@@ -72,11 +82,13 @@ class GUI:
             log("Unable to copy current path to clipboard.", "e")
 
     def search_file(self):
+        # Handles clicking search_button
         self.searchwin = SearchWindow()
         self.searchwin.generate_results(self.search_textbox.text())
         self.search_textbox.setText("")
 
     def init_list(self):
+        # Initializes path_list
         try:
             log("Creating the path list view.", "i")
             self.hidden_files_checkbox.clicked.connect(self.handle_hidden_files)
@@ -91,6 +103,7 @@ class GUI:
             log("Unable to create the path list view.", "e")
 
     def init_labels(self):
+        # Initializes all labels
         try:
             log("Creating labels.", "i")
             
@@ -110,6 +123,7 @@ class GUI:
             log("Unable to create labels.", "e")
 
     def init_buttons(self):
+        # Initializes all buttons
         try:
             log("Creating buttons.", "i")
             self.copy_path_button.clicked.connect(self.copy_current_path)
@@ -126,9 +140,17 @@ class GUI:
             log("Unable to create buttons.", "e")
 
     def __init__(self):
-        # Set starting location to $HOME
-        open_path(normalize_out(run("echo $HOME")))
+        # START READING HERE
+        # ENTRY POINT
 
+        # Set starting location to $HOME
+        # Alternatively, see https://github.com/TaygaHoshi/sample-file-explorer/issues/5
+        if True:
+            open_path(normalize_out(run("echo $HOME")))
+        else:
+            open_path("last path")
+
+        # Build GUI
         log("Creating the window.", "i")
         self.main_window.setWindowTitle("Tayy File Explorer")
         self.main_window.resize(1280, 720)
@@ -149,11 +171,13 @@ class GUI:
         self.main_layout.addWidget(self.dynamic_info_label, 3, 2)
         self.main_layout.addWidget(self.search_textbox, 4, 0)
         self.main_layout.addWidget(self.search_button, 4, 1)
+
         self.main_widget.setLayout(self.main_layout)
 
         log("Starting.", "i")
         self.main_window.show()
         update_dynamic_labels(self.dynamic_info_label, self.main_window)
+        
         self.app.exec()
 
 class SearchWindow(QWidget):
