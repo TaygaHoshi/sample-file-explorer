@@ -75,17 +75,19 @@ class GUI:
 
     def list_doubleclick(self, item):
         # Handles double clicking path_list
-        open_path(get_current_dir() + "/" + item.text())
-        self.update_cwd_label()
-        self.update_path_list()
-        self.path_list.setCurrentRow(0)
+        _result = open_path(get_current_dir() + "/" + item.text())
+        if _result == 0:
+            self.update_cwd_label()
+            self.update_path_list()
+            self.path_list.setCurrentRow(0)
 
     def manual_change_cwd(self, path):
         # Handles changing cwd and updating path_list
-        open_path(path)
-        self.update_cwd_label()
-        self.update_path_list()
-        self.path_list.setCurrentRow(0)
+        _result = open_path(path)
+        if _result == 0:
+            self.update_cwd_label()
+            self.update_path_list()
+            self.path_list.setCurrentRow(0)
 
     def copy_current_path(self):
         # Handles clicking copy_path_button

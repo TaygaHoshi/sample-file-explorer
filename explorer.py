@@ -35,8 +35,10 @@ def get_current_dir():
 def open_path(path):
     if os.path.isdir(path):
         change_dir(path)
+        return 0
     elif os.path.isfile(path):
         open_file(path)
+        return 1
 
 def change_dir(newpath):
     try:
