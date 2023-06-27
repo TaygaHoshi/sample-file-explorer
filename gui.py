@@ -1,5 +1,6 @@
 #!./bin/python3
 
+from PyQt6 import QtGui
 from PyQt6.QtWidgets import QApplication, QLabel, QListWidget, QMainWindow, QGridLayout, QWidget, QPushButton, QLineEdit, QCheckBox
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
@@ -18,7 +19,7 @@ class GUI:
     searchwin = None
 
     # widgets
-    path_list = QListWidget()
+    path_list = None
     dynamic_info_label = QLabel()
     static_info_label = QLabel(text=f"Kernel\n{get_kernel_version()}\n\nDesktop Environment\n{get_desktop_environment().capitalize()}")
     current_dir_label = QLabel(text="/")
@@ -77,6 +78,7 @@ class GUI:
         open_path(get_current_dir() + "/" + item.text())
         self.update_cwd_label()
         self.update_path_list()
+        self.path_list.setCurrentRow(0)
 
     def copy_current_path(self):
         # Handles clicking copy_path_button
@@ -97,12 +99,14 @@ class GUI:
         # Initializes path_list
         try:
             log("Creating the path list view.", "i")
+            self.path_list = QListKeyboard(self)
             self.path_list.setStyleSheet(list_css)
             self.path_list.verticalScrollBar().setStyleSheet(scroll_css)
             self.path_list.horizontalScrollBar().setStyleSheet(scroll_css)
             self.path_list.setFont(self.default_font)
             self.path_list.addItems(self.get_list())
             self.path_list.itemActivated.connect(self.list_doubleclick)
+            self.path_list.setCurrentRow(0)
         except:
             log("Unable to create the path list view.", "e")
 
@@ -140,6 +144,7 @@ class GUI:
 
             self.search_textbox.setStyleSheet(list_css)
             self.search_textbox.setFont(self.default_font)
+            self.search_textbox.returnPressed.connect(self.search_file)
         except:
             log("Unable to create buttons.", "e")
 
@@ -181,7 +186,8 @@ class GUI:
         log("Starting.", "i")
         self.main_window.show()
         update_dynamic_labels(self.dynamic_info_label, self.main_window)
-        
+        self.path_list.setFocus()
+
         self.app.exec()
 
 class SearchWindow(QWidget):
@@ -213,5 +219,18 @@ class SearchWindow(QWidget):
         self.layout().addWidget(results_list, 0, 0)
 
         self.show()
+
+class QListKeyboard(QListWidget):
+    def __init__(self, parent):
+        QListWidget.__init__(self)
+        self.parent = parent
+    
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key.Key_Return:
+            self.parent.list_doubleclick(self.currentItem())
+        elif e.key() == Qt.Key.Key_Down:
+            self.setCurrentRow(self.currentRow() + 1)
+        elif e.key() == Qt.Key.Key_Up and self.currentRow() >= 1:
+            self.setCurrentRow(self.currentRow() - 1)
 
 GUI()
