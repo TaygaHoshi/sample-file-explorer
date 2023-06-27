@@ -4,6 +4,7 @@ from PyQt6.QtCore import Qt
 from explorer import *
 from info_gather import *
 from css import *
+from settings import SettingHandler
 
 class GUI:
     # core gui
@@ -27,6 +28,14 @@ class GUI:
     # fonts
     default_font = QFont("Noto Sans", 16)
 
+    # settings
+    setting_handler = SettingHandler(get_current_dir())
+
+    def init_settings(self):
+        self.setting_handler.load_settings()
+        log(self.setting_handler.settings["show_hidden_files"], "i")
+        self.hidden_files_checkbox.setChecked("True" == self.setting_handler.settings["show_hidden_files"])
+
     def update_cwd_label(self):
         self.current_dir_label.setText(f"{get_current_dir()}")
         self.current_dir_label.update()
@@ -43,6 +52,10 @@ class GUI:
     def update_path_list(self):
         self.path_list.clear()
         self.path_list.addItems(self.get_list())
+
+    def handle_hidden_files(self):
+        self.update_path_list()
+        self.setting_handler.change_setting("show_hidden_files", str(self.hidden_files_checkbox.isChecked()))
 
     def list_doubleclick(self, item):
         open_path(get_current_dir() + "/" + item.text())
@@ -66,8 +79,7 @@ class GUI:
     def init_list(self):
         try:
             log("Creating the path list view.", "i")
-            self.hidden_files_checkbox.setChecked(True)
-            self.hidden_files_checkbox.clicked.connect(self.update_path_list)
+            self.hidden_files_checkbox.clicked.connect(self.handle_hidden_files)
 
             self.path_list.setStyleSheet(list_css)
             self.path_list.verticalScrollBar().setStyleSheet(scroll_css)
@@ -123,6 +135,7 @@ class GUI:
         self.main_window.setCentralWidget(self.main_widget)
 
         log("Creating widgets.", "i")
+        self.init_settings()
         self.init_list()
         self.init_labels()
         self.init_buttons()
