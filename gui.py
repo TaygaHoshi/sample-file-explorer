@@ -80,6 +80,13 @@ class GUI:
         self.update_path_list()
         self.path_list.setCurrentRow(0)
 
+    def manual_change_cwd(self, path):
+        # Handles changing cwd and updating path_list
+        open_path(path)
+        self.update_cwd_label()
+        self.update_path_list()
+        self.path_list.setCurrentRow(0)
+
     def copy_current_path(self):
         # Handles clicking copy_path_button
         try:
@@ -157,7 +164,7 @@ class GUI:
         if True:
             open_path(normalize_out(run("echo $HOME")))
         else:
-            open_path("last path")
+            open_path("last path from last boot")
 
         # Build GUI
         log("Creating the window.", "i")
