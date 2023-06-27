@@ -56,9 +56,8 @@ def get_desktop_environment():
 
 def get_ram_usage():
     used = normalize_out(run("free -m | head -2 | tail -1 | awk '{print $3}'"))
-    available = normalize_out(run("free -m | head -2 | tail -1 | awk '{print $7}'"))
     total = normalize_out(run("free -m | head -2 | tail -1 | awk '{print $2}'"))
-    return f"Memory ({int(used)*100//int(total)}%)\n{used}/{available} MB"
+    return f"Memory ({int(used)*100//int(total)}%)\n{used}/{total} MB"
 
 def update_dynamic_labels(dynamic_label, window):
     label_update = threading.Thread(target=_update_labels, args=[dynamic_label, window])
