@@ -48,7 +48,7 @@ def change_dir(newpath):
         log("Unable change current working directory.", "e")
 
 def open_file(path):
-    threaded_run(f"xdg-open '{path}' > /dev/null")
+    threaded_run(f'xdg-open "{path}" > /dev/null')
 
 def make_directory(dir_name):
     # makes a new directory
