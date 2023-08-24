@@ -27,6 +27,7 @@ class GUI:
     search_button = QPushButton(text="Search")
     search_textbox = QLineEdit(placeholderText="Search within current directory.")
     hidden_files_checkbox = QCheckBox(text="Show hidden files")
+    continue_from_last_checkbox = QCheckBox(text="Continue from last directory")
 
     # fonts
     default_font = QFont("Noto Sans", 16)
@@ -40,11 +41,25 @@ class GUI:
         self.hidden_files_checkbox.setStyleSheet(checkbox_css)
         self.hidden_files_checkbox.clicked.connect(self.handle_hidden_files)
 
+        self.continue_from_last_checkbox.setStyleSheet(checkbox_css)
+        self.continue_from_last_checkbox.clicked.connect(self.handle_continue_from_last_path)
+
         self.setting_handler.load_settings()
         log(self.setting_handler.settings["show_hidden_files"], "i")
+        log(self.setting_handler.settings["continue_from_last"], "i")
 
         # Apply to widgets
         self.hidden_files_checkbox.setChecked("True" == self.setting_handler.settings["show_hidden_files"])
+        self.continue_from_last_checkbox.setChecked("True" == self.setting_handler.settings["continue_from_last"])
+        
+        # Set starting path
+        if not self.continue_from_last_checkbox.isChecked():
+            open_path(normalize_out(run("echo $HOME")))
+        else:
+            last_path = self.setting_handler.settings["last_dir"]
+            open_path(normalize_out(run(f"echo {last_path}")))
+
+
 
     def update_cwd_label(self):
         # Updates the header
@@ -73,6 +88,9 @@ class GUI:
         self.update_path_list()
         self.setting_handler.change_setting("show_hidden_files", str(self.hidden_files_checkbox.isChecked()))
 
+    def handle_continue_from_last_path(self):
+        self.setting_handler.change_setting("continue_from_last", str(self.continue_from_last_checkbox.isChecked()))
+
     def list_doubleclick(self, item):
         # Handles double clicking path_list
         _result = open_path(get_current_dir() + "/" + item.text())
@@ -80,6 +98,7 @@ class GUI:
             self.update_cwd_label()
             self.update_path_list()
             self.path_list.setCurrentRow(0)
+            self.setting_handler.change_setting("last_dir", get_current_dir())
 
     def manual_change_cwd(self, path):
         # Handles changing cwd and updating path_list
@@ -161,13 +180,6 @@ class GUI:
         # START READING HERE
         # ENTRY POINT
 
-        # Set starting location to $HOME
-        # Alternatively, see https://github.com/TaygaHoshi/sample-file-explorer/issues/5
-        if True:
-            open_path(normalize_out(run("echo $HOME")))
-        else:
-            open_path("last path from last boot")
-
         # Build GUI
         log("Creating the window.", "i")
         self.main_window.setWindowTitle("Tayy File Explorer")
@@ -184,6 +196,7 @@ class GUI:
         self.main_layout.addWidget(self.current_dir_label, 0, 0)
         self.main_layout.addWidget(self.copy_path_button, 0, 1)
         self.main_layout.addWidget(self.hidden_files_checkbox, 1, 0)
+        self.main_layout.addWidget(self.continue_from_last_checkbox, 1, 1)
         self.main_layout.addWidget(self.path_list, 2, 0, 2, 2)
         self.main_layout.addWidget(self.static_info_label, 2, 2)
         self.main_layout.addWidget(self.dynamic_info_label, 3, 2)

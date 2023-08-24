@@ -1,7 +1,7 @@
 from simple_log import log
 
 class SettingHandler:
-    settings = {"show_hidden_files":"False"}
+    settings = {"show_hidden_files":"False", "continue_from_last":"False", "last_dir":"$HOME"}
     filename = "settings.txt"
     guipy_location = None
 
@@ -14,7 +14,7 @@ class SettingHandler:
             log("Saving settings.", "i")
             with open(self.filename, "w") as settings_file:
                 for key in self.settings:
-                    settings_file.write(f"{key}:{self.settings[key]}")
+                    settings_file.write(f"{key}:{self.settings[key]}\n")
         except:
             log("Unable to save settings.", "e")
 
@@ -23,8 +23,9 @@ class SettingHandler:
             log("Loading settings.", "i")
             with open(self.filename, "r") as settings_file:
                 for line in settings_file:
-                    _line = line.split(":")
-                    self.settings[_line[0]] = _line[1]
+                    if not line == "":
+                        _line = line.split(":")
+                        self.settings[_line[0]] = _line[1].strip()
         except:
             log("Setting file not found. Generating a default settings file.", "e")
             self.save_settings()
